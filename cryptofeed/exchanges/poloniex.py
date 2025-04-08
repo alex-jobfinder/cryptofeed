@@ -71,7 +71,7 @@ class Poloniex(Feed):
         price = Decimal(msg['data'][0]['price'])
         amount = Decimal(msg['data'][0]['amount'])
         t = Trade(
-            msg['data'][0]['id'],
+            self.id,
             self.exchange_symbol_to_std_symbol(msg['data'][0]['symbol']),
             SELL if msg['data'][0]['takerSide'] == 'sell' else BUY,
             amount,
@@ -109,6 +109,7 @@ class Poloniex(Feed):
                         delta[side[:-1]].append((price, amount))
             self.seq_no[pair] = data['id']
             await self.book_callback(L2_BOOK, self._l2_book[pair], timestamp, timestamp=self.timestamp_normalize(data['ts']), raw=msg, delta=delta)
+
 
     async def message_handler(self, msg: str, conn, timestamp: float):
         msg = json.loads(msg, parse_float=Decimal)
